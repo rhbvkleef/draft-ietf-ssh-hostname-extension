@@ -73,9 +73,7 @@
       </t>
       <t>
         The required syntax is defined using the Augmented BNF defined in
-        <xref target="RFC5243"/>. 
-        Some general ABNF definitions are required throughout the document;
-        they will be defined in subsequent sections.
+        <xref target="RFC5243"/>.
       </t>
       <t>
         With the increased use of virtualization technologies, there may be

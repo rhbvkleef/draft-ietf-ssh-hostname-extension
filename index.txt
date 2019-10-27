@@ -99,13 +99,13 @@ Table of Contents
    example, possible values for 'data' are "foo" and "bar".
 
    The required syntax is defined using the Augmented BNF defined in
-   [RFC5243].  Some general ABNF definitions are required throughout the
-   document; they will be defined in subsequent sections.
+   [RFC5243].
 
    With the increased use of virtualization technologies, there may be
    several possible definitions for the term "virtual host".  This
    document follows the definition from Section 4.1.14 of [RFC3875],
    where several virtual hosts share the same IP address, and hostnames
+
 
 
 
