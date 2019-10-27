@@ -2,7 +2,7 @@
 
 .PHONY: build clean
 
-build: rfc/index.json rfc/index.pdf rfc/index.html rfc/index.html rfc/index.txt
+build: rfc/index.json rfc/index.pdf rfc/index.html rfc/index.html rfc/index.txt rfc/index.xml
 
 clean:
 	rm -rf rfc/*
