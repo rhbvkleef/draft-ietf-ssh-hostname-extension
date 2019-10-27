@@ -5,7 +5,7 @@
 build: rfc/index.json rfc/index.pdf rfc/index.html rfc/index.html rfc/index.txt
 
 clean:
-	rm -rf rfc
+	rm -rf rfc/*
 
 %/index.json: %.xml
 	mkdir -p $*
