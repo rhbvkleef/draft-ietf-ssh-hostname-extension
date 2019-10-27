@@ -1,0 +1,4 @@
+[submodule "rfc"]
+	path = rfc
+	url = git@github.com:rhbvkleef/draft-x-ssh-hostname-01
+	branch = gh-pages

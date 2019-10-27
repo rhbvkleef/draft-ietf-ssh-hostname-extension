@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+                           "http://xml.resource.org/authoring/rfc2629.dtd">
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<rfc
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  category="exp"
+  docName="draft-x-ssh-hostname-01"
+  ipr="trust200902"
+  consensus="false"
+  updates="4252"
+  submissionType="IETF"
+  version="3">
+  <front>
+    <title abbrev="X-Acme">Username field reused as authority field</title>
+    <seriesInfo 
+      name="Internet-Draft"
+      status="experimental"
+      value="draft-ssh-virtualhost"/>
+    <author
+      fullname="Rolf van Kleef"
+      initials="R. H. B."
+      role="editor"
+      surname="van Kleef">
+      <address>
+        <email>rfc@rolfvankleef.nl</email>
+        <uri>https://rolfvankleef.nl/</uri>
+      </address>
+    </author>
+    <area>int</area>
+    <area>tsv</area>
+    <keyword>SSH</keyword>
+    <keyword>HOST</keyword>
+    <abstract>
+      <t>
+        This document describes an extension for SSH that allows an SSH server
+        to identify which virtual host a client is attempting to connect to.
+        It ensures that unextended clients can interoperate with extended
+        servers and vice-versa, albeit without the features provided as a
+        result of this document.
+      </t>
+    </abstract>
+  </front>
+  <middle>
+    <section title="Introduction">
+      <t>
+        Many application-layer protocols already have means of specifying which
+        "virtual host" a client intends to connects to.
+        Examples are the HTTP 'Host' header as specified by
+        <xref target="IANA_MH">the IANA Message Headers</xref> list, and the
+        <xref target="RFC7151">FTP HOST command</xref>.
+        Most of these implementations note that it is used to identify different
+        virtual hosts where multiple DNS names resolve to one IP address.
+        The goal of this document is to make it possible to implement similar
+        features to SSH by enhancing the 'username' field in the user
+        authentication packet so that it can be used to specify to which
+        virtual host the client means to connect.
+      </t>
+    </section>
+    <section title="Conventions Used in This Document">
+      <t>
+        The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+        "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>",
+        "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>",
+        "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>",
+        "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this
+        document are to be interpreted as described in
+        <xref target="RFC2119"/>.
+      </t>
+      <t>
+        Throughout this document, when the fields are referenced, they will
+        appear within single quotes.
+        When values to fill those fields are referenced, they will appear
+        within double quotes.
+        Using the above example, possible values for 'data' are "foo" and
+        "bar".
+      </t>
+      <t>
+        The required syntax is defined using the Augmented BNF defined in
+        <xref target="RFC5243"/>. 
+        Some general ABNF definitions are required throughout the document;
+        they will be defined in subsequent sections.
+      </t>
+      <t>
+        With the increased use of virtualization technologies, there may be
+        several possible definitions for the term "virtual host".
+        This document follows the definition from
+        <xref target="RFC3875">Section 4.1.14 of</xref>, where several virtual
+        hosts share the same IP address, and hostnames are used by the
+        server-SSH process to route sessions to the appropriate virtual host.
+      </t>
+    </section>
+    <section title="Updates for the Protocol Version Exchange">
+      <t>
+        SSH has a method of exchanging details about the protocol version
+        and supported featureset.
+        This is described in
+        <xref target="RFC4253">section 4.2 of</xref>.
+        Both the server and the client <bcp14>MUST</bcp14> add a 'comments'
+        entry containing the string "x-virtualhost" in the version
+        string as specified in the aforementioned section of the
+        aforementioned RFC.
+        The client or server respectively, can then use the presence or
+        absence of the value "x-virtualhost" in the list of 'comments' to
+        determine whether the server or client, respectively, supports the
+        protocol extension described in this document.
+      </t>
+    </section>
+    <section title="Updates for SSH_MSG_USERAUTH_REQUEST">
+      <t>
+        This document proposes the name of the virtual host be placed in the
+        'username' field of the <tt>SSH_MSG_USERAUTH_REQUEST</tt> message
+        next to the actual username.
+      </t>
+      <section title="Syntax of the 'username' Field">
+        <t>
+          The method of embedding the name of the virtual host in the
+          'username' field of the aforementioned packet is separating the
+          username and the name of the virtual host by an "@"-sign.
+          The name of the virtual host <bcp14>MUST</bcp14> be a valid
+          hostname as specified by
+          <xref target="RFC3986">section 3.2.2 of</xref>.
+        </t>
+        <t>
+          It should still be possible to simply specify a username without a
+          specification of a virtual host.
+          If this is wanted, an "@"-sign <bcp14>MUST</bcp14> be appended to the
+          username, unless the username does not contain an "@"-sign, in which
+          case, an "@"-sign <bcp14>SHOULD NOT</bcp14> be appended to the
+          username.
+        </t>
+        <t>
+          Formalizing the preceding text, the value of the 'username' field
+          of the <tt>SSH_MSG_USERAUTH_REQUEST</tt> will conform to this
+          grammar:
+        </t>
+        <figure>
+          <name>'username' field grammar</name>
+          <sourcecode type="abnf" name="'username' field grammar">
+username_value    =  username "@" virtual_host_name
+username_value    =/ username "@"
+username_value    =/ username_noat
+
+username          =  1*(%x01-%x10FFFF)
+username_noat     =  1*(%x01-%x39 / %x41-%x10FFFF)
+virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
+        </figure>
+      </section>
+      <section title="Examples">
+        <table>
+          <name>Examples of values in the 'username' field</name>
+          <thead>
+            <tr>
+              <th>Transmitted string</th>
+              <th>Actual username</th>
+              <th>Actual host</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><tt>user@host.example</tt></td>
+              <td><tt>user</tt></td>
+              <td><tt>host.example</tt></td>
+            </tr>
+            <tr>
+              <td><tt>user@@host.example</tt></td>
+              <td><tt>user@</tt></td>
+              <td><tt>host.example</tt></td>
+            </tr>
+            <tr>
+              <td><tt>user</tt></td>
+              <td><tt>user</tt></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><tt>user@name@host.example</tt></td>
+              <td><tt>user@name</tt></td>
+              <td><tt>host.example</tt></td>
+            </tr>
+            <tr>
+              <td><tt>user@x@@</tt></td>
+              <td><tt>user@x@</tt></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><tt>user@[ff::ff]</tt></td>
+              <td><tt>user</tt></td>
+              <td><tt>[ff::ff]</tt></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+    <section title="Interoperability">
+      <t>
+        It is essential that older implementations of SSH servers and clients
+        will keep working, even when the other party does support the protocol
+        alterations as described in this document.
+        It is acceptable to fall back to the behaviour and featureset of the
+        SSH protocol without the features and behaviours resulting from the
+        extension described in this document.
+      </t>
+      <t>
+        When a new client is used to connect to a server that does not support
+        the extension described in this document, the client
+        <bcp14>MUST NOT</bcp14> submit a name of the virtual host and
+        <bcp14>MUST NOT</bcp14> append the username with an "@"-sign.
+        Any services that depend on the specification of a virtual host can
+        be expected to be absent or dysfunctional, and should not be
+        requested.
+      </t>
+      <t>
+        When the server detects a client that does not support the
+        extension described in this document, the server
+        <bcp14>MUST</bcp14> interpret the username field as if it is a username
+        in its entirity, without attempting to split out a hostname.
+        The server should then proceed as if no virtual host was specified by
+        the client.
+      </t>
+    </section>
+    <section title="Security considerations">
+      <t>
+        All the credentials are submitted over a secure line.
+        That means that the name of the virtual host is submitted over a secure
+        transport as well.
+        The extension information is not submitted over a secure line.
+        It is, in fact, submitted over plaintext.
+        That means that a potential attacker could override advertised support,
+        or lack thereof, of the extension described in this document.
+        This does not introduce a critical security issue, as overriding
+        this will very likely cause a failed authentication, either because
+        the requested user does not exist on the server, or because the
+        credentials used are not valid for the requested user.
+      </t>
+    </section>
+  </middle>
+  <back>
+    <references title="Normative References">
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3875.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4253.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5243.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.7151.xml"/>
+    </references>
+    <references title="Informative References">
+      <reference
+        anchor="IANA_MH"
+        target="https://www.iana.org/assignments/message-headers/message-headers.xhtml">
+        <front>
+          <title>IANA Message Header registry</title>
+          <author>
+            <organization>Internet Assigned Numbers Authority</organization>
+          </author>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>
+
+<!-- vim: ts=2:sts=2:sw=2:expandtab
+-->
