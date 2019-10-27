@@ -1,4 +1,6 @@
 {
   "version": 1,
-  "sections": {}
+  "sections": {
+    "iana_additions": "5.1"
+  }
 }

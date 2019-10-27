@@ -3,14 +3,14 @@
 
 
 Network Working Group                            R. H. B. van Kleef, Ed.
-Internet-Draft                                           27 October 2019
-Updates: 4252 (if approved)                                             
-Intended status: Experimental                                           
+Internet-Draft                                    Individual Contributor
+Updates: 4252 (if approved)                              27 October 2019
+Intended status: Standards Track                                        
 Expires: 29 April 2020
 
 
-                Username field reused as authority field
-                        draft-x-ssh-hostname-01
+                   Accessing a Virtual Host over SSH
+                  draft-ietf-ssh-hostname-extension-01
 
 Abstract
 
@@ -55,21 +55,23 @@ Copyright Notice
 
 van Kleef                 Expires 29 April 2020                 [Page 1]
 
-Internet-Draft                   X-Acme                     October 2019
+Internet-Draft             SSH VHost extension              October 2019
 
 
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Conventions Used in This Document . . . . . . . . . . . . . .   2
-   3.  Updates for the Protocol Version Exchange . . . . . . . . . .   3
-   4.  Updates for SSH_MSG_USERAUTH_REQUEST  . . . . . . . . . . . .   3
-     4.1.  Syntax of the 'username' Field  . . . . . . . . . . . . .   3
-     4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   4
-   5.  Interoperability  . . . . . . . . . . . . . . . . . . . . . .   4
-   6.  Security considerations . . . . . . . . . . . . . . . . . . .   5
-   7.  Normative References  . . . . . . . . . . . . . . . . . . . .   5
-   8.  Informative References  . . . . . . . . . . . . . . . . . . .   5
+   3.  Updates for SSH_MSG_USERAUTH_REQUEST  . . . . . . . . . . . .   3
+     3.1.  Syntax of the 'username' Field  . . . . . . . . . . . . .   3
+     3.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   4
+   4.  Interoperability  . . . . . . . . . . . . . . . . . . . . . .   4
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+     5.1.  Additions to Existing Registries  . . . . . . . . . . . .   5
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   6
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
 
 1.  Introduction
@@ -104,41 +106,30 @@ Table of Contents
    several possible definitions for the term "virtual host".  This
    document follows the definition from Section 4.1.14 of [RFC3875],
    where several virtual hosts share the same IP address, and hostnames
-   are used by the server-SSH process to route sessions to the
-   appropriate virtual host.
 
 
 
 van Kleef                 Expires 29 April 2020                 [Page 2]
 
-Internet-Draft                   X-Acme                     October 2019
+Internet-Draft             SSH VHost extension              October 2019
 
 
-3.  Updates for the Protocol Version Exchange
+   are used by the server-SSH process to route sessions to the
+   appropriate virtual host.
 
-   SSH has a method of exchanging details about the protocol version and
-   supported featureset.  This is described in section 4.2 of [RFC4253].
-   Both the server and the client MUST add a 'comments' entry containing
-   the string "x-virtualhost" in the version string as specified in the
-   aforementioned section of the aforementioned RFC.  The client or
-   server respectively, can then use the presence or absence of the
-   value "x-virtualhost" in the list of 'comments' to determine whether
-   the server or client, respectively, supports the protocol extension
-   described in this document.
-
-4.  Updates for SSH_MSG_USERAUTH_REQUEST
+3.  Updates for SSH_MSG_USERAUTH_REQUEST
 
    This document proposes the name of the virtual host be placed in the
    'username' field of the "SSH_MSG_USERAUTH_REQUEST" message next to
    the actual username.
 
-4.1.  Syntax of the 'username' Field
+3.1.  Syntax of the 'username' Field
 
    The method of embedding the name of the virtual host in the
    'username' field of the aforementioned packet is separating the
    username and the name of the virtual host by an "@"-sign.  The name
-   of the virtual host MUST be a valid hostname as specified by section
-   3.2.2 of [RFC3986].
+   of the virtual host MUST be a valid hostname as specified by
+   Section 3.2.2 of [RFC3986].
 
    It should still be possible to simply specify a username without a
    specification of a virtual host.  If this is wanted, an "@"-sign MUST
@@ -159,6 +150,15 @@ Internet-Draft                   X-Acme                     October 2019
 
                      Figure 1: 'username' field grammar
 
+   When this grammar, with the root symbol of 'username_value' is used
+   to parse the 'username' field, the value of the symbol 'username' or
+   'username_noat' are to be used as if they are the username, and the
+   value of the symbol 'virtual_host_name' may be used as the name of
+   the virtual host, if it is present.  If the symbol
+   'virtual_host_name' is absent, no virtual host name is specified.
+
+
+
 
 
 
@@ -167,10 +167,10 @@ Internet-Draft                   X-Acme                     October 2019
 
 van Kleef                 Expires 29 April 2020                 [Page 3]
 
-Internet-Draft                   X-Acme                     October 2019
+Internet-Draft             SSH VHost extension              October 2019
 
 
-4.2.  Examples
+3.2.  Examples
 
       +--------------------------+-----------------+----------------+
       | Transmitted string       | Actual username | Actual host    |
@@ -190,14 +190,18 @@ Internet-Draft                   X-Acme                     October 2019
 
             Table 1: Examples of values in the 'username' field
 
-5.  Interoperability
+4.  Interoperability
 
    It is essential that older implementations of SSH servers and clients
    will keep working, even when the other party does support the
    protocol alterations as described in this document.  It is acceptable
    to fall back to the behaviour and featureset of the SSH protocol
    without the features and behaviours resulting from the extension
-   described in this document.
+   described in this document.  In order to do this, this document
+   describes an extension which can be either present or absent.  In
+   order to communicate to the other party whether this extension is
+   supported, the negotiation protocol as described in [RFC8308] is used
+   with the extension name as discussed in Section 5.1.
 
    When a new client is used to connect to a server that does not
    support the extension described in this document, the client MUST NOT
@@ -212,21 +216,24 @@ Internet-Draft                   X-Acme                     October 2019
    split out a hostname.  The server should then proceed as if no
    virtual host was specified by the client.
 
-
-
-
-
-
+5.  IANA Considerations
 
 
 
 
 van Kleef                 Expires 29 April 2020                 [Page 4]
 
-Internet-Draft                   X-Acme                     October 2019
+Internet-Draft             SSH VHost extension              October 2019
 
 
-6.  Security considerations
+5.1.  Additions to Existing Registries
+
+   Under the "Secure Shell (SSH) Protocol Parameters, Extension Names"
+   registry as defined in Section 4.2 of [RFC8308], IANA is requested to
+   assign the proposed extension name 'virtualhost' to be used as
+   described in this document.
+
+6.  Security Considerations
 
    All the credentials are submitted over a secure line.  That means
    that the name of the virtual host is submitted over a secure
@@ -239,7 +246,9 @@ Internet-Draft                   X-Acme                     October 2019
    user does not exist on the server, or because the credentials used
    are not valid for the requested user.
 
-7.  Normative References
+7.  References
+
+7.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -255,10 +264,6 @@ Internet-Draft                   X-Acme                     October 2019
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
-   [RFC4253]  Ylonen, T. and C. Lonvick, Ed., "The Secure Shell (SSH)
-              Transport Layer Protocol", RFC 4253, DOI 10.17487/RFC4253,
-              January 2006, <https://www.rfc-editor.org/info/rfc4253>.
-
    [RFC5243]  Ogier, R., "OSPF Database Exchange Summary List
               Optimization", RFC 5243, DOI 10.17487/RFC5243, May 2008,
               <https://www.rfc-editor.org/info/rfc5243>.
@@ -268,37 +273,32 @@ Internet-Draft                   X-Acme                     October 2019
               DOI 10.17487/RFC7151, March 2014,
               <https://www.rfc-editor.org/info/rfc7151>.
 
-8.  Informative References
-
-   [IANA_MH]  Internet Assigned Numbers Authority, "IANA Message Header
-              registry", <https://www.iana.org/assignments/message-
-              headers/message-headers.xhtml>.
 
 
 
 
 van Kleef                 Expires 29 April 2020                 [Page 5]
 
-Internet-Draft                   X-Acme                     October 2019
+Internet-Draft             SSH VHost extension              October 2019
 
+
+   [RFC8308]  Bider, D., "Extension Negotiation in the Secure Shell
+              (SSH) Protocol", RFC 8308, DOI 10.17487/RFC8308, March
+              2018, <https://www.rfc-editor.org/info/rfc8308>.
+
+7.2.  Informative References
+
+   [IANA_MH]  Internet Assigned Numbers Authority, "IANA Message Header
+              registry", <https://www.iana.org/assignments/message-
+              headers/message-headers.xhtml>.
 
 Author's Address
 
    Rolf van Kleef (editor)
+   Individual Contributor
 
    Email: rfc@rolfvankleef.nl
    URI:   https://rolfvankleef.nl/
-
-
-
-
-
-
-
-
-
-
-
 
 
 
