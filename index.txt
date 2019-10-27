@@ -14,11 +14,12 @@ Expires: 29 April 2020
 
 Abstract
 
-   This document describes an extension for SSH that allows an SSH
-   server to identify which virtual host a client is attempting to
-   connect to.  It ensures that unextended clients can interoperate with
-   extended servers and vice-versa, albeit without the features provided
-   as a result of this document.
+   This document describes an extension for the
+   "SSH_MSG_USERAUTH_REQUEST" as defined in section 5 of RFC 4252 that
+   allows an SSH server to identify which virtual host a client is
+   attempting to connect to.  It ensures that unextended clients can
+   interoperate with extended servers and vice-versa, albeit without the
+   features provided as a result of this document.
 
 Status of This Memo
 
@@ -48,8 +49,7 @@ Copyright Notice
    Please review these documents carefully, as they describe your rights
    and restrictions with respect to this document.  Code Components
    extracted from this document must include Simplified BSD License text
-   as described in Section 4.e of the Trust Legal Provisions and are
-   provided without warranty as described in the Simplified BSD License.
+
 
 
 
@@ -57,6 +57,9 @@ van Kleef                 Expires 29 April 2020                 [Page 1]
 
 Internet-Draft             SSH VHost extension              October 2019
 
+
+   as described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Simplified BSD License.
 
 Table of Contents
 
@@ -99,13 +102,10 @@ Table of Contents
    example, possible values for 'data' are "foo" and "bar".
 
    The required syntax is defined using the Augmented BNF defined in
-   [RFC5243].
+   [RFC5234].
 
    With the increased use of virtualization technologies, there may be
    several possible definitions for the term "virtual host".  This
-   document follows the definition from Section 4.1.14 of [RFC3875],
-   where several virtual hosts share the same IP address, and hostnames
-
 
 
 
@@ -114,6 +114,8 @@ van Kleef                 Expires 29 April 2020                 [Page 2]
 Internet-Draft             SSH VHost extension              October 2019
 
 
+   document follows the definition from Section 4.1.14 of [RFC3875],
+   where several virtual hosts share the same IP address, and hostnames
    are used by the server-SSH process to route sessions to the
    appropriate virtual host.
 
@@ -156,8 +158,6 @@ Internet-Draft             SSH VHost extension              October 2019
    value of the symbol 'virtual_host_name' may be used as the name of
    the virtual host, if it is present.  If the symbol
    'virtual_host_name' is absent, no virtual host name is specified.
-
-
 
 
 
@@ -255,24 +255,24 @@ Internet-Draft             SSH VHost extension              October 2019
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC3875]  Robinson, D. and K. Coar, "The Common Gateway Interface
-              (CGI) Version 1.1", RFC 3875, DOI 10.17487/RFC3875,
-              October 2004, <https://www.rfc-editor.org/info/rfc3875>.
-
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
-   [RFC5243]  Ogier, R., "OSPF Database Exchange Summary List
-              Optimization", RFC 5243, DOI 10.17487/RFC5243, May 2008,
-              <https://www.rfc-editor.org/info/rfc5243>.
+   [RFC4252]  Ylonen, T. and C. Lonvick, Ed., "The Secure Shell (SSH)
+              Authentication Protocol", RFC 4252, DOI 10.17487/RFC4252,
+              January 2006, <https://www.rfc-editor.org/info/rfc4252>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
 
    [RFC7151]  Hethmon, P. and R. McMurray, "File Transfer Protocol HOST
               Command for Virtual Hosts", RFC 7151,
               DOI 10.17487/RFC7151, March 2014,
               <https://www.rfc-editor.org/info/rfc7151>.
-
 
 
 
@@ -292,6 +292,10 @@ Internet-Draft             SSH VHost extension              October 2019
               registry", <https://www.iana.org/assignments/message-
               headers/message-headers.xhtml>.
 
+   [RFC3875]  Robinson, D. and K. Coar, "The Common Gateway Interface
+              (CGI) Version 1.1", RFC 3875, DOI 10.17487/RFC3875,
+              October 2004, <https://www.rfc-editor.org/info/rfc3875>.
+
 Author's Address
 
    Rolf van Kleef (editor)
@@ -299,10 +303,6 @@ Author's Address
 
    Email: rfc@rolfvankleef.nl
    URI:   https://rolfvankleef.nl/
-
-
-
-
 
 
 

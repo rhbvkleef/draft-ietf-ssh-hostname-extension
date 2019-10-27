@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml.resource.org/authoring/rfc2629.dtd">
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-ietf-ssh-hostname-extension-01" ipr="trust200902" submissionType="IETF" consensus="true" updates="4252">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+  <?rfc private="SSH VHost extension" ?>
   <?rfc strict="yes" ?>
   <?rfc toc="yes"?>
   <?rfc tocdepth="4"?>
@@ -29,8 +29,10 @@
     <keyword>Internet-Draft</keyword>
     <abstract>
       <t>
-        This document describes an extension for SSH that allows an SSH server
-        to identify which virtual host a client is attempting to connect to.
+        This document describes an extension for the
+        <tt>SSH_MSG_USERAUTH_REQUEST</tt> as defined in section 5 of RFC 4252
+        that allows an SSH server to identify which virtual host a client is
+        attempting to connect to.
         It ensures that unextended clients can interoperate with extended
         servers and vice-versa, albeit without the features provided as a
         result of this document.
@@ -73,7 +75,7 @@
       </t>
       <t>
         The required syntax is defined using the Augmented BNF defined in
-        <xref target="RFC5243"/>.
+        <xref target="RFC5234"/>.
       </t>
       <t>
         With the increased use of virtualization technologies, there may be
@@ -272,24 +274,6 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
         <seriesInfo name="RFC" value="2119"/>
         <seriesInfo name="DOI" value="10.17487/RFC2119"/>
       </reference>
-      <reference anchor="RFC3875" target="https://www.rfc-editor.org/info/rfc3875" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3875.xml">
-        <front>
-          <title>The Common Gateway Interface (CGI) Version 1.1</title>
-          <author initials="D." surname="Robinson" fullname="D. Robinson">
-            <organization/>
-          </author>
-          <author initials="K." surname="Coar" fullname="K. Coar">
-            <organization/>
-          </author>
-          <date year="2004" month="October"/>
-          <abstract>
-            <t>The Common Gateway Interface (CGI) is a simple interface for running external programs, software or gateways under an information server in a platform-independent manner.  Currently, the supported information servers are HTTP servers. </t>
-            <t> The interface has been in use by the World-Wide Web (WWW) since 1993.  This specification defines the 'current practice' parameters of the 'CGI/1.1' interface developed and documented at the U.S. National Centre for Supercomputing Applications.  This document also defines the use of the CGI/1.1 interface on UNIX(R) and other, similar systems.  This memo provides information for the Internet community.</t>
-          </abstract>
-        </front>
-        <seriesInfo name="RFC" value="3875"/>
-        <seriesInfo name="DOI" value="10.17487/RFC3875"/>
-      </reference>
       <reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml">
         <front>
           <title>Uniform Resource Identifier (URI): Generic Syntax</title>
@@ -311,19 +295,40 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
         <seriesInfo name="RFC" value="3986"/>
         <seriesInfo name="DOI" value="10.17487/RFC3986"/>
       </reference>
-      <reference anchor="RFC5243" target="https://www.rfc-editor.org/info/rfc5243" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5243.xml">
+      <reference anchor="RFC4252" target="https://www.rfc-editor.org/info/rfc4252" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4252.xml">
         <front>
-          <title>OSPF Database Exchange Summary List Optimization</title>
-          <author initials="R." surname="Ogier" fullname="R. Ogier">
+          <title>The Secure Shell (SSH) Authentication Protocol</title>
+          <author initials="T." surname="Ylonen" fullname="T. Ylonen">
             <organization/>
           </author>
-          <date year="2008" month="May"/>
+          <author initials="C." surname="Lonvick" fullname="C. Lonvick" role="editor">
+            <organization/>
+          </author>
+          <date year="2006" month="January"/>
           <abstract>
-            <t>This document describes a backward-compatible optimization for the Database Exchange process in OSPFv2 and OSPFv3.  In this optimization, a router does not list a Link State Advertisement (LSA) in Database Description packets sent to a neighbor, if the same or a more recent instance of the LSA was listed in a Database Description packet already received from the neighbor.  This optimization reduces Database Description overhead by about 50% in large networks.  This optimization does not affect synchronization, since it only omits unnecessary information from Database Description packets.  This memo  provides information for the Internet community.</t>
+            <t>The Secure Shell Protocol (SSH) is a protocol for secure remote login and other secure network services over an insecure network.  This document describes the SSH authentication protocol framework and public key, password, and host-based client authentication methods. Additional authentication methods are described in separate documents. The SSH authentication protocol runs on top of the SSH transport layer protocol and provides a single authenticated tunnel for the SSH connection protocol.  [STANDARDS-TRACK]</t>
           </abstract>
         </front>
-        <seriesInfo name="RFC" value="5243"/>
-        <seriesInfo name="DOI" value="10.17487/RFC5243"/>
+        <seriesInfo name="RFC" value="4252"/>
+        <seriesInfo name="DOI" value="10.17487/RFC4252"/>
+      </reference>
+      <reference anchor="RFC5234" target="https://www.rfc-editor.org/info/rfc5234" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
+        <front>
+          <title>Augmented BNF for Syntax Specifications: ABNF</title>
+          <author initials="D." surname="Crocker" fullname="D. Crocker" role="editor">
+            <organization/>
+          </author>
+          <author initials="P." surname="Overell" fullname="P. Overell">
+            <organization/>
+          </author>
+          <date year="2008" month="January"/>
+          <abstract>
+            <t>Internet technical specifications often need to define a formal syntax.  Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications.  The current specification documents ABNF. It balances compactness and simplicity with reasonable representational power.  The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges.  This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications.  [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="STD" value="68"/>
+        <seriesInfo name="RFC" value="5234"/>
+        <seriesInfo name="DOI" value="10.17487/RFC5234"/>
       </reference>
       <reference anchor="RFC7151" target="https://www.rfc-editor.org/info/rfc7151" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7151.xml">
         <front>
@@ -365,6 +370,24 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
             <organization>Internet Assigned Numbers Authority</organization>
           </author>
         </front>
+      </reference>
+      <reference anchor="RFC3875" target="https://www.rfc-editor.org/info/rfc3875" xml:base="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3875.xml">
+        <front>
+          <title>The Common Gateway Interface (CGI) Version 1.1</title>
+          <author initials="D." surname="Robinson" fullname="D. Robinson">
+            <organization/>
+          </author>
+          <author initials="K." surname="Coar" fullname="K. Coar">
+            <organization/>
+          </author>
+          <date year="2004" month="October"/>
+          <abstract>
+            <t>The Common Gateway Interface (CGI) is a simple interface for running external programs, software or gateways under an information server in a platform-independent manner.  Currently, the supported information servers are HTTP servers. </t>
+            <t> The interface has been in use by the World-Wide Web (WWW) since 1993.  This specification defines the 'current practice' parameters of the 'CGI/1.1' interface developed and documented at the U.S. National Centre for Supercomputing Applications.  This document also defines the use of the CGI/1.1 interface on UNIX(R) and other, similar systems.  This memo provides information for the Internet community.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="3875"/>
+        <seriesInfo name="DOI" value="10.17487/RFC3875"/>
       </reference>
     </references>
   </back>

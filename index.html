@@ -8,8 +8,10 @@
 <meta content="Rolf van Kleef" name="author">
 <meta content="
        
-        This document describes an extension for SSH that allows an SSH server
-        to identify which virtual host a client is attempting to connect to.
+        This document describes an extension for the
+         SSH_MSG_USERAUTH_REQUEST  as defined in section 5 of RFC 4252
+        that allows an SSH server to identify which virtual host a client is
+        attempting to connect to.
         It ensures that unextended clients can interoperate with extended
         servers and vice-versa, albeit without the features provided as a
         result of this document.
@@ -1079,8 +1081,10 @@ aside > p {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">
-        This document describes an extension for SSH that allows an SSH server
-        to identify which virtual host a client is attempting to connect to.
+        This document describes an extension for the
+        <code>SSH_MSG_USERAUTH_REQUEST</code> as defined in section 5 of RFC 4252
+        that allows an SSH server to identify which virtual host a client is
+        attempting to connect to.
         It ensures that unextended clients can interoperate with extended
         servers and vice-versa, albeit without the features provided as a
         result of this document.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
@@ -1220,7 +1224,7 @@ aside > p {
         "bar".<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">
         The required syntax is defined using the Augmented BNF defined in
-        <span>[<a href="#RFC5243" class="xref">RFC5243</a>]</span>.<a href="#section-2-3" class="pilcrow">¶</a></p>
+        <span>[<a href="#RFC5234" class="xref">RFC5234</a>]</span>.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <p id="section-2-4">
         With the increased use of virtualization technologies, there may be
         several possible definitions for the term "virtual host".
@@ -1446,15 +1450,15 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</pre><a href="#section
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
-<dt id="RFC3875">[RFC3875]</dt>
-        <dd>
-<span class="refAuthor">Robinson, D.</span><span class="refAuthor"> and K. Coar</span>, <span class="refTitle">"The Common Gateway Interface (CGI) Version 1.1"</span>, <span class="seriesInfo">RFC 3875</span>, <span class="seriesInfo">DOI 10.17487/RFC3875</span>, <time datetime="2004-10">October 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3875">https://www.rfc-editor.org/info/rfc3875</a>&gt;</span>. </dd>
 <dt id="RFC3986">[RFC3986]</dt>
         <dd>
 <span class="refAuthor">Berners-Lee, T.</span><span class="refAuthor">, Fielding, R.</span><span class="refAuthor">, and L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;</span>. </dd>
-<dt id="RFC5243">[RFC5243]</dt>
+<dt id="RFC4252">[RFC4252]</dt>
         <dd>
-<span class="refAuthor">Ogier, R.</span>, <span class="refTitle">"OSPF Database Exchange Summary List Optimization"</span>, <span class="seriesInfo">RFC 5243</span>, <span class="seriesInfo">DOI 10.17487/RFC5243</span>, <time datetime="2008-05">May 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5243">https://www.rfc-editor.org/info/rfc5243</a>&gt;</span>. </dd>
+<span class="refAuthor">Ylonen, T.</span><span class="refAuthor"> and C. Lonvick, Ed.</span>, <span class="refTitle">"The Secure Shell (SSH) Authentication Protocol"</span>, <span class="seriesInfo">RFC 4252</span>, <span class="seriesInfo">DOI 10.17487/RFC4252</span>, <time datetime="2006-01">January 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc4252">https://www.rfc-editor.org/info/rfc4252</a>&gt;</span>. </dd>
+<dt id="RFC5234">[RFC5234]</dt>
+        <dd>
+<span class="refAuthor">Crocker, D., Ed.</span><span class="refAuthor"> and P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5234">https://www.rfc-editor.org/info/rfc5234</a>&gt;</span>. </dd>
 <dt id="RFC7151">[RFC7151]</dt>
         <dd>
 <span class="refAuthor">Hethmon, P.</span><span class="refAuthor"> and R. McMurray</span>, <span class="refTitle">"File Transfer Protocol HOST Command for Virtual Hosts"</span>, <span class="seriesInfo">RFC 7151</span>, <span class="seriesInfo">DOI 10.17487/RFC7151</span>, <time datetime="2014-03">March 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7151">https://www.rfc-editor.org/info/rfc7151</a>&gt;</span>. </dd>
@@ -1469,8 +1473,11 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</pre><a href="#section
         </h3>
 <dl class="references">
 <dt id="IANA_MH">[IANA_MH]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Internet Assigned Numbers Authority</span>, <span class="refTitle">"IANA Message Header registry"</span>, <span>&lt;<a href="https://www.iana.org/assignments/message-headers/message-headers.xhtml">https://www.iana.org/assignments/message-headers/message-headers.xhtml</a>&gt;</span>. </dd>
+<dt id="RFC3875">[RFC3875]</dt>
+      <dd>
+<span class="refAuthor">Robinson, D.</span><span class="refAuthor"> and K. Coar</span>, <span class="refTitle">"The Common Gateway Interface (CGI) Version 1.1"</span>, <span class="seriesInfo">RFC 3875</span>, <span class="seriesInfo">DOI 10.17487/RFC3875</span>, <time datetime="2004-10">October 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3875">https://www.rfc-editor.org/info/rfc3875</a>&gt;</span>. </dd>
 </dl>
 </section>
 </section>
