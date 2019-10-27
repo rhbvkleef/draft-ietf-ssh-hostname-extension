@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-                           "http://xml.resource.org/authoring/rfc2629.dtd">
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
@@ -11,6 +9,7 @@
   updates="4252">
 
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+  <?rfc private="SSH VHost extension" ?>
   <?rfc strict="yes" ?>
   <?rfc toc="yes"?>
   <?rfc tocdepth="4"?>
@@ -48,8 +47,10 @@
     <keyword>Internet-Draft</keyword>
     <abstract>
       <t>
-        This document describes an extension for SSH that allows an SSH server
-        to identify which virtual host a client is attempting to connect to.
+        This document describes an extension for the
+        <tt>SSH_MSG_USERAUTH_REQUEST</tt> as defined in section 5 of RFC 4252
+        that allows an SSH server to identify which virtual host a client is
+        attempting to connect to.
         It ensures that unextended clients can interoperate with extended
         servers and vice-versa, albeit without the features provided as a
         result of this document.
@@ -92,7 +93,7 @@
       </t>
       <t>
         The required syntax is defined using the Augmented BNF defined in
-        <xref target="RFC5243"/>.
+        <xref target="RFC5234"/>.
       </t>
       <t>
         With the increased use of virtualization technologies, there may be
@@ -266,11 +267,11 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
       <xi:include
         href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
       <xi:include
-        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3875.xml"/>
-      <xi:include
         href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml"/>
       <xi:include
-        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5243.xml"/>
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4252.xml"/>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml"/>
       <xi:include
         href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.7151.xml"/>
       <xi:include
@@ -287,6 +288,8 @@ virtual_host_name =  &lt;See section 3.2.2 of RFC3986&gt;</sourcecode>
           </author>
         </front>
       </reference>
+      <xi:include
+        href="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3875.xml"/>
     </references>
   </back>
 </rfc>
