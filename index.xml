@@ -14,7 +14,9 @@
         Accessing a Virtual Host over SSH
     </title>
     <seriesInfo name="Internet-Draft" status="experimental" value="draft-vankleef-ssh-hostname-extension-00"/>
-    <seriesInfo name="ISSN" value="2070-1721"/>
+    <!--<seriesInfo
+      name="ISSN"
+      value="2070-1721"/>-->
     <author fullname="Rolf van Kleef" initials="R. H. B." role="editor" surname="van Kleef">
       <organization>Individual Contributor</organization>
       <address>
