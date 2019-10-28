@@ -9,6 +9,7 @@ verify_ssl = true
 xml2rfc = "*"
 weasyprint = "*"
 pycairo = "*"
+rfc2html = "*"
 
 [requires]
 python_version = "3.7"

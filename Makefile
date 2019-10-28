@@ -2,7 +2,7 @@
 
 .PHONY: build clean
 
-build: rfc/index.json rfc/index.pdf rfc/index.html rfc/index.html rfc/index.txt rfc/index.xml
+build: rfc/index.json rfc/index.pdf rfc/index.html rfc/index.html rfc/index.txt rfc/index.xml rfc/index.txt.html
 
 clean:
 	rm -rf rfc/*
@@ -18,6 +18,9 @@ clean:
 %/index.pdf: %.xml
 	mkdir -p $*
 	xml2rfc $< --v3 --pdf -o$@
+
+%/index.txt.html: %/index.txt
+	python htmlify.py $< $@
 
 %/index.html: %.xml
 	mkdir -p $*
