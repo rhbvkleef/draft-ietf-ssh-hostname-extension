@@ -1,4 +1,4 @@
 [submodule "rfc"]
 	path = rfc
-	url = git@github.com:rhbvkleef/draft-ietf-ssh-hostname-extension
+	url = git@github.com:rhbvkleef/draft-vankleef-ssh-hostname-extension
 	branch = gh-pages
