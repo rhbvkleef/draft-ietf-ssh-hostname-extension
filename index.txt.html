@@ -1,0 +1,333 @@
+<pre>Network Working Group                            R. H. B. van Kleef, Ed.
+Internet-Draft                                    Individual Contributor
+Updates: <a href="./rfc4252">4252</a> (if approved)                              28 October 2019
+Intended status: Standards Track
+Expires: 30 April 2020
+
+
+                   <span class="h1">Accessing a Virtual Host over SSH</span>
+                <span class="h1">draft-vankleef-ssh-hostname-extension-00</span>
+
+Abstract
+
+   This document describes an extension for the
+   &quot;SSH_MSG_USERAUTH_REQUEST&quot; as defined in <a href="./rfc4252#section-5">section&nbsp;5 of RFC 4252</a> that
+   allows an SSH server to identify which virtual host a client is
+   attempting to connect to.  It ensures that unextended clients can
+   interoperate with extended servers and vice-versa, albeit without the
+   features provided as a result of this document.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of <a href="./bcp78">BCP 78</a> and <a href="./bcp79">BCP 79</a>.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at <a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a>.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as &quot;work in progress.&quot;
+
+   This Internet-Draft will expire on 30 April 2020.
+
+Copyright Notice
+
+   Copyright (c) 2019 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to <a href="./bcp78">BCP 78</a> and the IETF Trust&#x27;s Legal
+   Provisions Relating to IETF Documents (<a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/</a>
+   <a href="https://trustee.ietf.org/license-info">license-info</a>) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Simplified BSD License text
+
+
+
+
+<span class="grey">van Kleef                 Expires 30 April 2020                 [Page 1]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-2" ></span>
+<span class="grey">Internet-Draft             SSH VHost extension              October 2019</span>
+
+
+   as described in Section 4.e of the <a href="https://trustee.ietf.org/license-info">Trust Legal Provisions</a> and are
+   provided without warranty as described in the Simplified BSD License.
+
+Table of Contents
+
+   <a href="#section-1">1</a>.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   <a href="#page-2">2</a>
+   <a href="#section-2">2</a>.  Conventions Used in This Document . . . . . . . . . . . . . .   <a href="#page-2">2</a>
+   <a href="#section-3">3</a>.  Updates for SSH_MSG_USERAUTH_REQUEST  . . . . . . . . . . . .   <a href="#page-3">3</a>
+     <a href="#section-3.1">3.1</a>.  Syntax of the &#x27;username&#x27; Field  . . . . . . . . . . . . .   <a href="#page-3">3</a>
+     <a href="#section-3.2">3.2</a>.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   <a href="#page-4">4</a>
+   <a href="#section-4">4</a>.  Interoperability  . . . . . . . . . . . . . . . . . . . . . .   <a href="#page-4">4</a>
+   <a href="#section-5">5</a>.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   <a href="#page-4">4</a>
+     <a href="#section-5.1">5.1</a>.  Additions to Existing Registries  . . . . . . . . . . . .   <a href="#page-5">5</a>
+   <a href="#section-6">6</a>.  Security Considerations . . . . . . . . . . . . . . . . . . .   <a href="#page-5">5</a>
+   <a href="#section-7">7</a>.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   <a href="#page-5">5</a>
+     <a href="#section-7.1">7.1</a>.  Normative References  . . . . . . . . . . . . . . . . . .   <a href="#page-5">5</a>
+     <a href="#section-7.2">7.2</a>.  Informative References  . . . . . . . . . . . . . . . . .   <a href="#page-6">6</a>
+   Author&#x27;s Address  . . . . . . . . . . . . . . . . . . . . . . . .   <a href="#page-6">6</a>
+
+<span class="h2"><a class="selflink" id="section-1" href="#section-1">1</a>.  Introduction</span>
+
+   Many application-layer protocols already have means of specifying
+   which &quot;virtual host&quot; a client intends to connects to.  Examples are
+   the HTTP &#x27;Host&#x27; header as specified by the IANA Message Headers
+   [<a href="#ref-IANA_MH" title="&quot;IANA Message Header registry&quot;">IANA_MH</a>] list, and the FTP HOST command [<a href="./rfc7151" title="&quot;File Transfer Protocol HOST Command for Virtual Hosts&quot;">RFC7151</a>].  Most of these
+   implementations note that it is used to identify different virtual
+   hosts where multiple DNS names resolve to one IP address.  The goal
+   of this document is to make it possible to implement similar features
+   to SSH by enhancing the &#x27;username&#x27; field in the user authentication
+   packet (&quot;SSH_MSG_USERAUTH_REQUEST&quot;) as defined in <a href="./rfc4252#section-5">Section&nbsp;5 of
+   [RFC4252]</a>so that it can be used to specify to which virtual host the
+   client means to connect.
+
+<span class="h2"><a class="selflink" id="section-2" href="#section-2">2</a>.  Conventions Used in This Document</span>
+
+   The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+   &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this
+   document are to be interpreted as described in [<a href="./rfc2119" title="&quot;Key words for use in RFCs to Indicate Requirement Levels&quot;">RFC2119</a>].
+
+   Throughout this document, when the fields are referenced, they will
+   appear within single quotes.  When values to fill those fields are
+   referenced, they will appear within double quotes.  Using the above
+   example, possible values for &#x27;data&#x27; are &quot;foo&quot; and &quot;bar&quot;.
+
+   The required syntax is defined using the Augmented BNF defined in
+   [<a href="./rfc5234" title="&quot;Augmented BNF for Syntax Specifications: ABNF&quot;">RFC5234</a>].
+
+
+
+
+
+<span class="grey">van Kleef                 Expires 30 April 2020                 [Page 2]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-3" ></span>
+<span class="grey">Internet-Draft             SSH VHost extension              October 2019</span>
+
+
+   With the increased use of virtualization technologies, there may be
+   several possible definitions for the term &quot;virtual host&quot;.  This
+   document follows the definition from <a href="./rfc3875#section-4.1.14">Section&nbsp;4.1.14 of [RFC3875]</a>,
+   where several virtual hosts share the same IP address, and hostnames
+   are used by the server-SSH process to route sessions to the
+   appropriate virtual host.
+
+<span class="h2"><a class="selflink" id="section-3" href="#section-3">3</a>.  Updates for SSH_MSG_USERAUTH_REQUEST</span>
+
+   This document proposes the name of the virtual host be placed in the
+   &#x27;username&#x27; field of the &quot;SSH_MSG_USERAUTH_REQUEST&quot; message next to
+   the actual username.
+
+<span class="h3"><a class="selflink" id="section-3.1" href="#section-3.1">3.1</a>.  Syntax of the &#x27;username&#x27; Field</span>
+
+   The method of embedding the name of the virtual host in the
+   &#x27;username&#x27; field of the aforementioned packet is separating the
+   username and the name of the virtual host by an &quot;@&quot;-sign.  The name
+   of the virtual host MUST be a valid hostname as specified by
+   <a href="./rfc3986#section-3.2.2">Section&nbsp;3.2.2 of [RFC3986]</a>.
+
+   It should still be possible to simply specify a username without a
+   specification of a virtual host.  If this is wanted, an &quot;@&quot;-sign MUST
+   be appended to the username, unless the username does not contain an
+   &quot;@&quot;-sign, in which case, an &quot;@&quot;-sign SHOULD NOT be appended to the
+   username.
+
+   Formalizing the preceding text, the value of the &#x27;username&#x27; field of
+   the &quot;SSH_MSG_USERAUTH_REQUEST&quot; will conform to this grammar:
+
+      username_value    =  username &quot;@&quot; virtual_host_name
+      username_value    =/ username &quot;@&quot;
+      username_value    =/ username_noat
+
+      username          =  1*(%x01-%x10FFFF)
+      username_noat     =  1*(%x01-%x39 / %x41-%x10FFFF)
+      virtual_host_name =  &lt;See <a href="./rfc3986#section-3.2.2">section&nbsp;3.2.2 of RFC3986</a>&gt;
+
+                     Figure 1: &#x27;username&#x27; field grammar
+
+   When this grammar, with the root symbol of &#x27;username_value&#x27; is used
+   to parse the &#x27;username&#x27; field, the value of the symbol &#x27;username&#x27; or
+   &#x27;username_noat&#x27; are to be used as if they are the username, and the
+   value of the symbol &#x27;virtual_host_name&#x27; may be used as the name of
+   the virtual host, if it is present.  If the symbol
+   &#x27;virtual_host_name&#x27; is absent, no virtual host name is specified.
+
+
+
+
+
+<span class="grey">van Kleef                 Expires 30 April 2020                 [Page 3]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-4" ></span>
+<span class="grey">Internet-Draft             SSH VHost extension              October 2019</span>
+
+
+<span class="h3"><a class="selflink" id="section-3.2" href="#section-3.2">3.2</a>.  Examples</span>
+
+      +--------------------------+-----------------+----------------+
+      | Transmitted string       | Actual username | Actual host    |
+      +==========================+=================+================+
+      | &quot;user@host.example&quot;      | &quot;user&quot;          | &quot;host.example&quot; |
+      +--------------------------+-----------------+----------------+
+      | &quot;user@@host.example&quot;     | &quot;user@&quot;         | &quot;host.example&quot; |
+      +--------------------------+-----------------+----------------+
+      | &quot;user&quot;                   | &quot;user&quot;          |                |
+      +--------------------------+-----------------+----------------+
+      | &quot;user@name@host.example&quot; | &quot;user@name&quot;     | &quot;host.example&quot; |
+      +--------------------------+-----------------+----------------+
+      | &quot;user@x@@&quot;               | &quot;user@x@&quot;       |                |
+      +--------------------------+-----------------+----------------+
+      | &quot;user@[ff::ff]&quot;          | &quot;user&quot;          | &quot;[ff::ff]&quot;     |
+      +--------------------------+-----------------+----------------+
+
+            Table 1: Examples of values in the &#x27;username&#x27; field
+
+<span class="h2"><a class="selflink" id="section-4" href="#section-4">4</a>.  Interoperability</span>
+
+   It is essential that older implementations of SSH servers and clients
+   will keep working, even when the other party does support the
+   protocol alterations as described in this document.  It is acceptable
+   to fall back to the behaviour and featureset of the SSH protocol
+   without the features and behaviours resulting from the extension
+   described in this document.  In order to do this, this document
+   describes an extension which can be either present or absent.  In
+   order to communicate to the other party whether this extension is
+   supported, the negotiation protocol as described in [<a href="./rfc8308" title="&quot;Extension Negotiation in the Secure Shell (SSH) Protocol&quot;">RFC8308</a>] is used
+   with the extension name as discussed in <a href="#section-5.1">Section 5.1</a>.
+
+   When a new client is used to connect to a server that does not
+   support the extension described in this document, the client MUST NOT
+   submit a name of the virtual host and MUST NOT append the username
+   with an &quot;@&quot;-sign.  Any services that depend on the specification of a
+   virtual host can be expected to be absent or dysfunctional, and
+   should not be requested.
+
+   When the server detects a client that does not support the extension
+   described in this document, the server MUST interpret the username
+   field as if it is a username in its entirity, without attempting to
+   split out a hostname.  The server should then proceed as if no
+   virtual host was specified by the client.
+
+<span class="h2"><a class="selflink" id="section-5" href="#section-5">5</a>.  IANA Considerations</span>
+
+
+
+
+<span class="grey">van Kleef                 Expires 30 April 2020                 [Page 4]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-5" ></span>
+<span class="grey">Internet-Draft             SSH VHost extension              October 2019</span>
+
+
+<span class="h3"><a class="selflink" id="section-5.1" href="#section-5.1">5.1</a>.  Additions to Existing Registries</span>
+
+   Under the &quot;Secure Shell (SSH) Protocol Parameters, Extension Names&quot;
+   registry as defined in <a href="./rfc8308#section-4.2">Section&nbsp;4.2 of [RFC8308]</a>, IANA is requested to
+   assign the proposed extension name &#x27;virtualhost&#x27; to be used as
+   described in this document.
+
+<span class="h2"><a class="selflink" id="section-6" href="#section-6">6</a>.  Security Considerations</span>
+
+   All the credentials are submitted over a secure line.  That means
+   that the name of the virtual host is submitted over a secure
+   transport as well.  The extension information is not submitted over a
+   secure line.  It is, in fact, submitted over plaintext.  That means
+   that a potential attacker could override advertised support, or lack
+   thereof, of the extension described in this document.  This does not
+   introduce a critical security issue, as overriding this will very
+   likely cause a failed authentication, either because the requested
+   user does not exist on the server, or because the credentials used
+   are not valid for the requested user.
+
+<span class="h2"><a class="selflink" id="section-7" href="#section-7">7</a>.  References</span>
+
+<span class="h3"><a class="selflink" id="section-7.1" href="#section-7.1">7.1</a>.  Normative References</span>
+
+   [<a id="ref-RFC2119">RFC2119</a>]  Bradner, S., &quot;Key words for use in RFCs to Indicate
+              Requirement Levels&quot;, <a href="./bcp14">BCP 14</a>, <a href="./rfc2119">RFC 2119</a>,
+              DOI 10.17487/RFC2119, March 1997,
+              &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.
+
+   [<a id="ref-RFC3986">RFC3986</a>]  Berners-Lee, T., Fielding, R., and L. Masinter, &quot;Uniform
+              Resource Identifier (URI): Generic Syntax&quot;, STD 66,
+              <a href="./rfc3986">RFC 3986</a>, DOI 10.17487/RFC3986, January 2005,
+              &lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;.
+
+   [<a id="ref-RFC4252">RFC4252</a>]  Ylonen, T. and C. Lonvick, Ed., &quot;The Secure Shell (SSH)
+              Authentication Protocol&quot;, <a href="./rfc4252">RFC 4252</a>, DOI 10.17487/RFC4252,
+              January 2006, &lt;<a href="https://www.rfc-editor.org/info/rfc4252">https://www.rfc-editor.org/info/rfc4252</a>&gt;.
+
+   [<a id="ref-RFC5234">RFC5234</a>]  Crocker, D., Ed. and P. Overell, &quot;Augmented BNF for Syntax
+              Specifications: ABNF&quot;, STD 68, <a href="./rfc5234">RFC 5234</a>,
+              DOI 10.17487/RFC5234, January 2008,
+              &lt;<a href="https://www.rfc-editor.org/info/rfc5234">https://www.rfc-editor.org/info/rfc5234</a>&gt;.
+
+   [<a id="ref-RFC7151">RFC7151</a>]  Hethmon, P. and R. McMurray, &quot;File Transfer Protocol HOST
+              Command for Virtual Hosts&quot;, <a href="./rfc7151">RFC 7151</a>,
+              DOI 10.17487/RFC7151, March 2014,
+              &lt;<a href="https://www.rfc-editor.org/info/rfc7151">https://www.rfc-editor.org/info/rfc7151</a>&gt;.
+
+
+
+
+<span class="grey">van Kleef                 Expires 30 April 2020                 [Page 5]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-6" ></span>
+<span class="grey">Internet-Draft             SSH VHost extension              October 2019</span>
+
+
+   [<a id="ref-RFC8308">RFC8308</a>]  Bider, D., &quot;Extension Negotiation in the Secure Shell
+              (SSH) Protocol&quot;, <a href="./rfc8308">RFC 8308</a>, DOI 10.17487/RFC8308, March
+              2018, &lt;<a href="https://www.rfc-editor.org/info/rfc8308">https://www.rfc-editor.org/info/rfc8308</a>&gt;.
+
+<span class="h3"><a class="selflink" id="section-7.2" href="#section-7.2">7.2</a>.  Informative References</span>
+
+   [<a id="ref-IANA_MH">IANA_MH</a>]  Internet Assigned Numbers Authority, &quot;IANA Message Header
+              registry&quot;, &lt;<a href="https://www.iana.org/assignments/message-headers/message-headers.xhtml">https://www.iana.org/assignments/message-</a>
+              <a href="https://www.iana.org/assignments/message-headers/message-headers.xhtml">headers/message-headers.xhtml</a>&gt;.
+
+   [<a id="ref-RFC3875">RFC3875</a>]  Robinson, D. and K. Coar, &quot;The Common Gateway Interface
+              (CGI) Version 1.1&quot;, <a href="./rfc3875">RFC 3875</a>, DOI 10.17487/RFC3875,
+              October 2004, &lt;<a href="https://www.rfc-editor.org/info/rfc3875">https://www.rfc-editor.org/info/rfc3875</a>&gt;.
+
+Author&#x27;s Address
+
+   Rolf van Kleef (editor)
+   Individual Contributor
+
+   Email: rfc@rolfvankleef.nl
+   URI:   <a href="https://rolfvankleef.nl/">https://rolfvankleef.nl/</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+van Kleef                 Expires 30 April 2020                 [Page 6]
+</pre>
