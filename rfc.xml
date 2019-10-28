@@ -70,7 +70,7 @@
         The goal of this document is to make it possible to implement similar
         features to SSH by enhancing the 'username' field in the user
         authentication packet (<tt>SSH_MSG_USERAUTH_REQUEST</tt>) as defined
-        in <xref target="RFC4252" section="5" sectionFormat="of" />so that it
+        in <xref target="RFC4252" section="5" sectionFormat="of"/> so that it
         can be used to specify to which virtual host the client means to
         connect.
       </t>
