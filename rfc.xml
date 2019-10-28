@@ -26,9 +26,9 @@
       name="Internet-Draft"
       status="experimental"
       value="draft-vankleef-ssh-hostname-extension-00"/>
-    <seriesInfo
+    <!--<seriesInfo
       name="ISSN"
-      value="2070-1721"/>
+      value="2070-1721"/>-->
     <author
       fullname="Rolf van Kleef"
       initials="R. H. B."
