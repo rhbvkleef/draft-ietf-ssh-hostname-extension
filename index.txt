@@ -88,7 +88,7 @@ Table of Contents
    of this document is to make it possible to implement similar features
    to SSH by enhancing the 'username' field in the user authentication
    packet ("SSH_MSG_USERAUTH_REQUEST") as defined in Section 5 of
-   [RFC4252]so that it can be used to specify to which virtual host the
+   [RFC4252] so that it can be used to specify to which virtual host the
    client means to connect.
 
 2.  Conventions Used in This Document
