@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-ietf-ssh-hostname-extension-01" ipr="trust200902" submissionType="IETF" consensus="true" updates="4252">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-vankleef-ssh-hostname-extension-00" ipr="trust200902" submissionType="IETF" consensus="true" updates="4252">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
   <?rfc private="SSH VHost extension" ?>
   <?rfc strict="yes" ?>
@@ -13,7 +13,7 @@
     <title abbrev="SSH VHost extension">
         Accessing a Virtual Host over SSH
     </title>
-    <seriesInfo name="Internet-Draft" status="experimental" value="draft-ietf-ssh-hostname-extension-01"/>
+    <seriesInfo name="Internet-Draft" status="experimental" value="draft-vankleef-ssh-hostname-extension-00"/>
     <seriesInfo name="ISSN" value="2070-1721"/>
     <author fullname="Rolf van Kleef" initials="R. H. B." role="editor" surname="van Kleef">
       <organization>Individual Contributor</organization>
@@ -51,8 +51,10 @@
         virtual hosts where multiple DNS names resolve to one IP address.
         The goal of this document is to make it possible to implement similar
         features to SSH by enhancing the 'username' field in the user
-        authentication packet so that it can be used to specify to which
-        virtual host the client means to connect.
+        authentication packet (<tt>SSH_MSG_USERAUTH_REQUEST</tt>) as defined
+        in <xref target="RFC4252" section="5" sectionFormat="of"/>so that it
+        can be used to specify to which virtual host the client means to
+        connect.
       </t>
     </section>
     <section title="Conventions Used in This Document">

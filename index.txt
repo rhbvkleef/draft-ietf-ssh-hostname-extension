@@ -4,13 +4,13 @@
 
 Network Working Group                            R. H. B. van Kleef, Ed.
 Internet-Draft                                    Individual Contributor
-Updates: 4252 (if approved)                              27 October 2019
+Updates: 4252 (if approved)                              28 October 2019
 Intended status: Standards Track                                        
-Expires: 29 April 2020
+Expires: 30 April 2020
 
 
                    Accessing a Virtual Host over SSH
-                  draft-ietf-ssh-hostname-extension-01
+                draft-vankleef-ssh-hostname-extension-00
 
 Abstract
 
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 April 2020.
+   This Internet-Draft will expire on 30 April 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-van Kleef                 Expires 29 April 2020                 [Page 1]
+van Kleef                 Expires 30 April 2020                 [Page 1]
 
 Internet-Draft             SSH VHost extension              October 2019
 
@@ -87,7 +87,8 @@ Table of Contents
    hosts where multiple DNS names resolve to one IP address.  The goal
    of this document is to make it possible to implement similar features
    to SSH by enhancing the 'username' field in the user authentication
-   packet so that it can be used to specify to which virtual host the
+   packet ("SSH_MSG_USERAUTH_REQUEST") as defined in Section 5 of
+   [RFC4252]so that it can be used to specify to which virtual host the
    client means to connect.
 
 2.  Conventions Used in This Document
@@ -104,16 +105,17 @@ Table of Contents
    The required syntax is defined using the Augmented BNF defined in
    [RFC5234].
 
-   With the increased use of virtualization technologies, there may be
-   several possible definitions for the term "virtual host".  This
 
 
 
-van Kleef                 Expires 29 April 2020                 [Page 2]
+
+van Kleef                 Expires 30 April 2020                 [Page 2]
 
 Internet-Draft             SSH VHost extension              October 2019
 
 
+   With the increased use of virtualization technologies, there may be
+   several possible definitions for the term "virtual host".  This
    document follows the definition from Section 4.1.14 of [RFC3875],
    where several virtual hosts share the same IP address, and hostnames
    are used by the server-SSH process to route sessions to the
@@ -163,9 +165,7 @@ Internet-Draft             SSH VHost extension              October 2019
 
 
 
-
-
-van Kleef                 Expires 29 April 2020                 [Page 3]
+van Kleef                 Expires 30 April 2020                 [Page 3]
 
 Internet-Draft             SSH VHost extension              October 2019
 
@@ -221,7 +221,7 @@ Internet-Draft             SSH VHost extension              October 2019
 
 
 
-van Kleef                 Expires 29 April 2020                 [Page 4]
+van Kleef                 Expires 30 April 2020                 [Page 4]
 
 Internet-Draft             SSH VHost extension              October 2019
 
@@ -277,7 +277,7 @@ Internet-Draft             SSH VHost extension              October 2019
 
 
 
-van Kleef                 Expires 29 April 2020                 [Page 5]
+van Kleef                 Expires 30 April 2020                 [Page 5]
 
 Internet-Draft             SSH VHost extension              October 2019
 
@@ -333,4 +333,4 @@ Author's Address
 
 
 
-van Kleef                 Expires 29 April 2020                 [Page 6]
+van Kleef                 Expires 30 April 2020                 [Page 6]
